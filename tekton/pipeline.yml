@@ -22,7 +22,7 @@ spec:
   - name: buildah
     params:
       - name: IMAGE
-        value: quay.io/jm_carnicero/express-juan-ting
+        value: quay.io/jm_carnicero/express-assignment:$(tasks.git-clone.results.commit)
     taskRef:
       name: buildah
       kind: ClusterTask
