@@ -1,0 +1,34 @@
+  
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: buildah
+spec:
+  tasks:
+  - name: git-clone
+    params:
+    - name: url
+      value: https://github.com/cloud-native-garage-method-cohort/emea7-juan-ting-express
+    - name: subdirectory
+      value: ""
+    - name: deleteExisting
+      value: "true"
+    taskRef:
+      name: git-clone
+      kind: ClusterTask
+    workspaces:
+    - name: output
+      workspace: pipeline-shared-data
+  - name: buildah
+    params:
+      - name: IMAGE
+        value: quay.io/jm_carnicero/express-juan-ting
+    taskRef:
+      name: buildah
+      kind: ClusterTask
+    runAfter: [git-clone]
+    workspaces:
+    - name: source
+      workspace: pipeline-shared-data
+  workspaces:
+  - name: pipeline-shared-data
