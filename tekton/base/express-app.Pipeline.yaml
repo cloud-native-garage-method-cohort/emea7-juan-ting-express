@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: buildah
+  name: express-app-pipeline
 spec:
   tasks:
   - name: git-clone

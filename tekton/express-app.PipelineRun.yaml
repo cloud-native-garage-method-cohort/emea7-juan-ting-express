@@ -1,10 +1,10 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: buildah-
+  generateName: express-app-pipeline-
 spec:
   pipelineRef:
-    name: buildah
+    name: express-app-pipeline
   serviceAccountName: build-robot
   workspaces:
   - name: pipeline-shared-data
