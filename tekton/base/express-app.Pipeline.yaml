@@ -4,11 +4,18 @@ kind: Pipeline
 metadata:
   name: express-app-pipeline
 spec:
+  params:
+  - name: app-name
+    type: string
+  - name: source-repo
+    type: string
+  - name: image-repo
+    type: string  
   tasks:
   - name: git-clone
     params:
     - name: url
-      value: https://github.com/cloud-native-garage-method-cohort/emea7-juan-ting-express
+      value: "$(params.source-repo)"
     - name: subdirectory
       value: ""
     - name: deleteExisting
@@ -19,10 +26,10 @@ spec:
     workspaces:
     - name: output
       workspace: pipeline-shared-data
-  - name: buildah
+  - name: create-image
     params:
       - name: IMAGE
-        value: quay.io/jm_carnicero/express-assignment:$(tasks.git-clone.results.commit)
+        value: $(params.image-repo):$(tasks.git-clone.results.commit)
     taskRef:
       name: buildah
       kind: ClusterTask
@@ -30,5 +37,56 @@ spec:
     workspaces:
     - name: source
       workspace: pipeline-shared-data
+  - name: create-configuration
+    params:
+    - name: app-name
+      value: "$(params.app-name)"
+    - name: commit
+      value: $(tasks.git-clone.results.commit)
+    - name: image-repo
+      value: "$(params.image-repo)"
+    - name: source-repo
+      value: "$(params.source-repo)"
+    taskRef:
+      name: create-configuration
+      kind: Task
+    runAfter: [create-image]
+    workspaces:
+    - name: source
+      workspace: pipeline-shared-data
+  - name: deploy
+    params:
+    - name: app-namespace
+      value: "$(context.pipelineRun.namespace)"
+    - name: manifest
+      value: "$(tasks.create-configuration.results.manifest)"
+    taskRef:
+      name: deploy
+      kind: Task
+    runAfter: [create-configuration]
+    workspaces:
+    - name: source
+      workspace: pipeline-shared-data
+  - name: save-configuration
+    params:
+    - name: manifest
+      value: "$(tasks.create-configuration.results.manifest)"
+    - name: app-name
+      value: "$(params.app-name)"
+    - name: sha
+      value: "$(tasks.git-clone.results.commit)"
+    taskRef:
+      name: save-configuration
+      kind: Task
+    runAfter: [deploy]
+    workspaces:
+    - name: source
+      workspace: pipeline-shared-data
+    - name: target
+      workspace: manifest-target-repo
+    - name: git-credentials
+      workspace: git-credentials
   workspaces:
   - name: pipeline-shared-data
+  - name: manifest-target-repo
+  - name: git-credentials

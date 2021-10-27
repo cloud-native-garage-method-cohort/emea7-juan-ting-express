@@ -3,6 +3,13 @@ kind: PipelineRun
 metadata:
   generateName: express-app-pipeline-
 spec:
+  params:
+  - name: app-name
+    value: express-assignment
+  - name: source-repo
+    value: https://github.com/cloud-native-garage-method-cohort/emea7-juan-ting-express
+  - name: image-repo
+    value: quay.io/jm_carnicero/express-assignment
   pipelineRef:
     name: express-app-pipeline
   serviceAccountName: build-robot
@@ -15,3 +22,14 @@ spec:
         resources:
           requests:
             storage: 1Gi
+  - name: manifest-target-repo
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce 
+        resources:
+          requests:
+            storage: 1Gi
+  - name: git-credentials
+    secret:
+      secretName: my-secret
