@@ -5,11 +5,11 @@ metadata:
 spec:
   params:
   - name: app-name
-    value: express-assignment
+    value: "express-assignment"
   - name: source-repo
-    value: https://github.com/cloud-native-garage-method-cohort/emea7-juan-ting-express
+    value: "https://github.com/cloud-native-garage-method-cohort/emea7-juan-ting-express"
   - name: image-repo
-    value: quay.io/jm_carnicero/express-assignment
+    value: "quay.io/jm_carnicero/express-assignment"
   pipelineRef:
     name: express-app-pipeline
   serviceAccountName: build-robot
@@ -32,4 +32,4 @@ spec:
             storage: 1Gi
   - name: git-credentials
     secret:
-      secretName: my-secret
+      secretName: git-credentials
