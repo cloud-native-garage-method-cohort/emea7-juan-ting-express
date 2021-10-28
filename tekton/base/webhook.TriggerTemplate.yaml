@@ -39,3 +39,4 @@ spec:
       - name: git-credentials
         secret:
           secretName: git-credentials
+
